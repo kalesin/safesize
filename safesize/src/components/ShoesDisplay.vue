@@ -26,59 +26,32 @@
         Search for shoes
       </h1>
       <div class="flex items-center ml-20 justify-center">
-        <p>Sort by:</p>
+        <p>Search</p>
+        <p class="ml-4">Price:</p>
         <button
           class="sortButton text-black bg-main p-1 w-10 h-10 ml-4"
-          @click="setAscending()"
+          @click="
+            toggleAscending();
+            sortByPrice();
+          "
           :class="{ 'bg-orange-300': ascending }"
         >
           <img v-if="ascending" src="../assets/ascending.png" />
           <img v-else src="../assets/descending.png" />
         </button>
-        <label class="ml-4 flex" for="brand">
-          <input class="checkbox" type="checkbox" checked v-model="brand" />
-          Brand
-        </label>
-        <label class="ml-4 flex" for="price">
-          <input class="checkbox" type="checkbox" checked v-model="price" />
-          Price
-        </label>
-        <label class="ml-4 flex" for="text">
-          <input class="checkbox" type="checkbox" checked v-model="text" />
-          Text
-        </label>
-      </div>
-      <div class="flex justify-center">
-        <div class="mb-3 xl:w-96">
-          <select
-            class="
-              form-select
-              appearance-none
-              block
-              w-full
-              px-3
-              py-1.5
-              text-base
-              font-normal
-              text-gray-700
-              bg-white bg-clip-padding bg-no-repeat
-              border border-solid border-gray-300
-              rounded
-              transition
-              ease-in-out
-              m-0
-              focus:text-gray-700
-              focus:bg-white
-              focus:border-blue-600
-              focus:outline-none
-            "
-            aria-label="Default select example"
-          >
-            <option selected>Sort by:</option>
-            <option value="1">Price</option>
-            <option value="2">Brand</option>
-            <option value="3">Text</option>
-          </select>
+        <p class="ml-4">Brand:</p>
+        <div class="brandContainer flex">
+          <div v-for="(item, index) in brandsArray" :key="index">
+            <label class="ml-2 flex capitalize" for="brand">
+              <input
+                class="checkbox"
+                type="checkbox"
+                :v-model="uniqueBrands[item]"
+                @click="negateCheckbox(item)"
+              />
+              {{ item }}
+            </label>
+          </div>
         </div>
       </div>
     </div>
@@ -135,51 +108,68 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import shoes from "../start code/shoes.json";
 
 let page = ref(0);
-let sortedShoes = JSON.parse(JSON.stringify(shoes));
-const brand = ref(false);
-const price = ref(false);
-const text = ref(false);
-const ascending = ref(false);
-let heroOpen = ref(true);
-let dropdownOpen = ref(false);
+let ascending = ref(false);
+let heroOpen = ref(false);
+//filtrirani rezultati
+let filtered = ref(shoes);
+//prikaz
+let results = computed(() =>
+  filtered.value.slice(perPage * page.value, perPage * (page.value + 1))
+);
 const perPage = 12;
-const pages = Math.round(Math.ceil(shoes.length / perPage));
-let results = computed(() => {
-  if (brand.value) {
-    sortByBrand();
-    return sortedShoes.slice(perPage * page.value, perPage * (page.value + 1));
-  } else if (price.value) {
-    sortByPrice();
-    return sortedShoes.slice(perPage * page.value, perPage * (page.value + 1));
-  } else {
-    return shoes.slice(perPage * page.value, perPage * (page.value + 1));
+const pages = computed(() =>
+  Math.round(Math.ceil(filtered.value.length / perPage))
+);
+
+//uredi in vrne objekt edinstvenih brandov
+const brandsArray = [];
+shoes.filter((item) => {
+  let index = brandsArray.findIndex((el) => el == item.brand);
+  if (index <= -1) {
+    return brandsArray.push(item.brand);
   }
 });
-function closeHero() {
-  const target = document.querySelectorAll("#hero")[0];
-  target.addEventListener("animationend", () => {
-    heroOpen.value = false;
-  });
-  target.classList.add("animate-fade-out");
+let uniqueBrands = {};
+for (let i = 0; i < brandsArray.length; i++) {
+  uniqueBrands[brandsArray[i]] = false;
 }
-function setAscending() {
-  ascending.value = !ascending.value;
+//negira vrednost filtra
+function negateCheckbox(value) {
+  console.log(uniqueBrands[value]);
+  uniqueBrands[value] = !uniqueBrands[value];
+  generateFiltered();
+  setPage(0)
 }
-function setPage(index) {
-  page.value = index;
-  console.log(page.value);
+
+function generateFiltered() {
+  let filters = [];
+  for (let key in uniqueBrands) {
+    if (uniqueBrands[key]) {
+      filters.push(key);
+    }
+  }
+  if (filters.length) {
+    filtered.value = shoes.filter((el) => {
+      return filters.includes(el.brand);
+    });
+  } else {
+    filtered.value = shoes;
+  }
 }
+
 function sortByPrice() {
-  const sorted = sortedShoes.sort((a, b) => a.price - b.price);
+  const sorted = filtered.value.sort((a, b) => a.price - b.price);
+  console.log(sorted);
   if (ascending.value) {
     sorted.reverse();
   }
-  return sorted;
+  filtered.value = sorted;
 }
+
 function sortByBrand() {
   const sorted = sortedShoes.sort(function (a, b) {
     var nameA = a.brand.toUpperCase(); // ignore upper and lowercase
@@ -197,7 +187,20 @@ function sortByBrand() {
   }
   return sorted;
 }
-function sortByText() {}
+
+function closeHero() {
+  const target = document.querySelectorAll("#hero")[0];
+  target.addEventListener("animationend", () => {
+    heroOpen.value = false;
+  });
+  target.classList.add("animate-fade-out");
+}
+function toggleAscending() {
+  ascending.value = !ascending.value;
+}
+function setPage(index) {
+  page.value = index;
+}
 </script>
 
 <style scoped>

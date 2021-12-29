@@ -1,10 +1,10 @@
 
 <template>
-  <div class="h-90 flex flex-col w-full p-4">
-    <router-link to="/home">
-      <p class="shoeButton text-black flex items-center">← Back to home</p>
+  <div class="h-90 flex flex-col w-full">
+    <router-link to="/home" class="h-5 flex items-center px-4">
+      <p class="homeButton text-black">← Back to home</p>
     </router-link>
-    <div class="bg-white flex rounded-lg w-full">
+    <div class="bg-white flex rounded-lg w-full h-60 p-4">
       <img :src="product.thumbnail" class="w-1/3 m-4 rounded-xl" />
       <div class="w-2/3 my-4 flex justify-center items-center">
         <div
@@ -57,55 +57,102 @@
         </div>
       </div>
     </div>
+    <div
+      class="
+        suggContainer
+        bg-main
+        w-full
+        flex flex-col
+        justify-center
+        items-center
+      "
+    >
+      <h1 class="capitalize text-white text-xl font-bold mb-2">
+        More from {{ product.brand }}
+      </h1>
+      <div class="w-full flex justify-center">
+        <div
+          class="bg-white elementWidth ml-4 flex rounded-lg h-full"
+          :class="{ 'mr-4': index == 2 }"
+          v-for="(item, index) in results"
+          :key="index"
+        >
+          <img :src="item.thumbnail" class="m-4 rounded-lg w-1/2" />
+          <div class="w-1/2 my-4 flex flex-col justify-center items-center">
+            <div class="font-bold capitalize text-center">{{ item.brand }}</div>
+            <div
+              class="mt-2 capitalize text-center flex items-center mx-2 h-1/3"
+            >
+              {{ item.model }}
+            </div>
+            <div
+              v-if="item.price_unit == 'EUR'"
+              class="mt-2 text-center font-bold"
+            >
+              € {{ item.price }}
+            </div>
+
+            <router-link :to="`/product/${item.id}`" @click="setProduct(item.id)">
+              <button class="shoeButton mt-2 text-white bg-main">
+                View Shoe
+              </button>
+            </router-link>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
+import {getCurrentInstance, defineComponent} from 'vue'
 import shoes from "../start code/shoes.json";
 import router from "../router";
 const productId = computed(() => router.currentRoute.value.params.id);
-const product = shoes.filter((el) => el.id == productId.value)[0];
-console.log(product);
+let product = ref([]);
+//vsi razen trenutnega
+const allResults = shoes.filter(
+  (el) => el.brand == product.brand && el.id != product.id
+);
+let results = ref([]);
+function generateRandom() {
+  let array = [];
+  let i = 0;
+  while (i < 3) {
+    let newNumber = Math.floor(Math.random() * allResults.length);
+    if (!array.includes(newNumber)) {
+      array.push(newNumber);
+      i++;
+    }
+  }
+  console.log(allResults);
+  for (let i = 0; i < 3; i++) {
+    results.value.push(allResults[array[i]]);
+  }
+}
+generateRandom();
+function setProduct(id){
+  console.log(shoes.filter((el) => el.id == id)[0])
+  product.value = shoes.filter((el) => el.id == id)[0];
+};
 </script>
 
 <style scoped>
-a {
-  color: #42b983;
-}
 .elementWidth {
   width: calc(25% - 5 / 4 * 16px);
-  height: calc((100% - 4 * 16px) / 3);
-}
-.containerHeight {
-  height: calc(100% - 20%);
-}
-.checkbox {
-  @apply w-6 h-6 mr-2 focus:ring-blue-500 focus:ring-opacity-0 border border-gray-400 rounded;
-  filter: hue-rotate(-30deg) brightness(1.25);
-}
-label > span {
-  @apply w-6 h-6 inline-block mr-2 rounded-full border border-gray-400 flex-shrink-0;
-}
-input[type="radio"] + label span {
-  transition: background 0.2s, transform 0.2s;
-}
-input[type="radio"] + label span:hover,
-input[type="radio"] + label:hover span {
-  transform: scale(1.2);
-}
-input[type="radio"]:checked + label span {
-  background-color: var(--main);
-  box-shadow: 0px 0px 0px 3px white inset;
-}
-input[type="radio"]:checked + label {
-  color: var(--main);
 }
 .shoeButton {
-  @apply hover:opacity-80 font-bold py-2 md:px-3 px-2 lg:text-base text-sm rounded;
+  @apply hover:opacity-60 font-bold py-2 md:px-3 px-2 lg:text-base text-sm rounded;
+}
+.homeButton {
+  @apply hover:opacity-80 font-bold lg:text-base text-sm rounded;
 }
 .sizeWidth {
   width: calc((100% - 2 * 8px) / 3);
+}
+.suggContainer {
+  height: 35%;
 }
 </style>
 

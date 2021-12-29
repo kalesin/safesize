@@ -11,8 +11,6 @@
           type="search"
           class="form-control searchInput"
           placeholder="Search"
-          aria-label="Search"
-          aria-describedby="button-addon2"
           v-model="searchInput"
         />
         <button
@@ -22,10 +20,7 @@
           @click="search(searchInput)"
         >
           <svg
-            aria-hidden="true"
             focusable="false"
-            data-prefix="fas"
-            data-icon="search"
             class="w-4"
             role="img"
             xmlns="http://www.w3.org/2000/svg"
@@ -41,10 +36,7 @@
       <p class="ml-4">Price:</p>
       <button
         class="sortButton text-black bg-main p-1 w-10 ml-4"
-        @click="
-          toggleAscending();
-          sortByPrice();
-        "
+        @click="toggleAscending();sortByPrice();"
         :class="{ 'bg-orange-300': ascending }"
       >
         <img v-if="ascending" src="../assets/ascending.png" />
@@ -67,14 +59,12 @@
     </div>
 
     <div
-      class="flex bg-main w-full flex-wrap h-80 items-start content-start"
-    >
+      class="flex bg-main w-full flex-wrap h-80 items-start content-start">
       <div
         class="bg-white elementWidth ml-4 mb-4 flex rounded-lg h-1/3"
         :class="{ 'mr-4': (index + 1) % 4 == 0, 'mt-4': index < 4 }"
         v-for="(item, index) in results"
-        :key="index"
-      >
+        :key="index">
         <img :src="item.thumbnail" class="m-4 rounded-lg w-1/2" />
         <div class="w-1/2 my-4 flex flex-col justify-center items-center">
           <div class="font-bold capitalize text-center">{{ item.brand }}</div>
@@ -87,7 +77,6 @@
           >
             € {{ item.price }}
           </div>
-
           <router-link :to="`/product/${item.id}`">
             <button class="shoeButton mt-2 text-white bg-main">
               View Shoe
@@ -111,7 +100,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed } from "vue";
 import shoes from "../start code/shoes.json";
 
 let page = ref(0);
@@ -162,10 +151,7 @@ function search(input) {
   });
   searchResults.value = results;
   filtered.value = results;
-  console.log(searchResults.value)
-  console.log(filtered.value)
 }
-
 function generateFiltered() {
   let filters = [];
   for (let key in uniqueBrands) {
@@ -180,9 +166,7 @@ function generateFiltered() {
   } else {
     filtered.value = searchResults.value;
   }
-  console.log('generate filtered',filtered.value)
 }
-
 function sortByPrice() {
   const sorted = filtered.value.sort((a, b) => a.price - b.price);
   console.log(sorted);
@@ -235,7 +219,7 @@ function setPage(index) {
   filter: hue-rotate(-30deg) brightness(1.25);
 }
 .shoeButton {
-  @apply hover:opacity-80 font-bold py-2 md:px-3 px-2 lg:text-base text-sm rounded;
+  @apply hover:opacity-70 font-bold py-2 md:px-3 px-2 lg:text-base text-sm rounded;
 }
 .sortButton {
   @apply hover:opacity-80 rounded;

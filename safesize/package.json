@@ -8,6 +8,8 @@
   },
   "dependencies": {
     "colors": "^1.4.0",
+    "express": "^4.17.2",
+    "node": "^17.3.0",
     "sneaks-api": "^1.2.3",
     "vue": "^3.2.25",
     "vue-router": "^4.0.12"

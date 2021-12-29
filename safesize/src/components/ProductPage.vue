@@ -63,7 +63,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import shoes from "../start code/shoes.json";
-import router from "../index";
+import router from "../router";
 const productId = computed(() => router.currentRoute.value.params.id);
 const product = shoes.filter((el) => el.id == productId.value)[0];
 console.log(product);

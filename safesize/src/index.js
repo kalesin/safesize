@@ -1,19 +1,36 @@
-import { createWebHistory, createRouter } from 'vue-router'
-import ShoesDisplay from './components/ShoesDisplay.vue'
-import ProductPage from './components/ProductPage.vue'
+const express = require('express');
+const app = express();
+const port = process.env.PORT || 3001;
 
-const router = createRouter({
-    history: createWebHistory(),
-    routes: [
-        { path: '/home', component: ShoesDisplay },
-        { path: '/product/:id', component: ProductPage },
-        { path: '/:pathMatch(.*)*', component: ShoesDisplay, redirect: '/home' },
-    ]
+//client
+app.use('/', express.static('../dist'))
+const routes = ['/', '/home']
+app.get(routes, (req, res) => {
+    res.sendFile('/dist/index.html', { root: __dirname });
+});
+
+app.use(
+    express.urlencoded({
+        extended: true,
+    })
+)
+app.use(express.json())
+
+app.use((req, res, next) => {
+    res = res.header("Access-Control-Allow-Origin", "*")
+    res = res.header(
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested, Content-Type, Accept, Authorization, Access-Control-Allow-Origin"
+    )
+    if (req.method === "OPTIONS") {
+        res = res.header(
+            "Access-Control-Allow-Methods",
+            "POST, PUT, PATCH, GET, DELETE"
+        )
+        return res.status(200).json({})
+    }
+    next()
 })
 
-router.beforeEach((to, from, next) => {
-    window.scrollTo(0, 0);
-    next();
-})
-
-export default router;
+//use specific port
+app.listen(port, () => console.log(`Listening on port ${port}`))

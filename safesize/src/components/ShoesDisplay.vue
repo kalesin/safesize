@@ -1,29 +1,88 @@
 
 <template>
+  <div id="hero" class="w-full h-90 z-10 absolute bg-main" v-if="heroOpen">
+    <img class="h-full w-full" src="../assets/parkour-1.jpg" alt="" />
+    <button
+      class="
+        hover:opacity-80
+        bg-orange-400
+        z-10
+        absolute
+        bottom-20
+        left-96
+        w-64
+        h-16
+        text-white text-lg
+        font-bold
+      "
+      @click="closeHero"
+    >
+      Explore Shoes
+    </button>
+  </div>
   <div class="h-90 bg-white w-full">
     <div class="flex items-center h-10">
-      <h1 class="text-left font-bold mb-4 ml-4 mt-4">Search for shoes</h1>
-      <div class="flex items-center mb-4 ml-4">
+      <h1 class="text-left font-bold mb-4 ml-4 mt-4 text-xl">
+        Search for shoes
+      </h1>
+      <div class="flex items-center ml-20 justify-center">
         <p>Sort by:</p>
-        <label class="labelAscending ml-4" for="ascending">
-          <input class="checkbox" type="checkbox" checked v-model="ascending" />
-          Asceding order
-        </label>
-        <label class="labelBrand ml-4" for="brand">
+        <button
+          class="sortButton text-black bg-main p-1 w-10 h-10 ml-4"
+          @click="setAscending()"
+          :class="{ 'bg-orange-300': ascending }"
+        >
+          <img v-if="ascending" src="../assets/ascending.png" />
+          <img v-else src="../assets/descending.png" />
+        </button>
+        <label class="ml-4 flex" for="brand">
           <input class="checkbox" type="checkbox" checked v-model="brand" />
           Brand
         </label>
-        <label class="labelPrice ml-4" for="price">
+        <label class="ml-4 flex" for="price">
           <input class="checkbox" type="checkbox" checked v-model="price" />
           Price
         </label>
-        <label class="labelText ml-4" for="text">
+        <label class="ml-4 flex" for="text">
           <input class="checkbox" type="checkbox" checked v-model="text" />
           Text
         </label>
       </div>
+      <div class="flex justify-center">
+        <div class="mb-3 xl:w-96">
+          <select
+            class="
+              form-select
+              appearance-none
+              block
+              w-full
+              px-3
+              py-1.5
+              text-base
+              font-normal
+              text-gray-700
+              bg-white bg-clip-padding bg-no-repeat
+              border border-solid border-gray-300
+              rounded
+              transition
+              ease-in-out
+              m-0
+              focus:text-gray-700
+              focus:bg-white
+              focus:border-blue-600
+              focus:outline-none
+            "
+            aria-label="Default select example"
+          >
+            <option selected>Sort by:</option>
+            <option value="1">Price</option>
+            <option value="2">Brand</option>
+            <option value="3">Text</option>
+          </select>
+        </div>
+      </div>
     </div>
-    <div class="flex bg-blue-300 w-full flex-wrap containerHeight">
+    <div class="flex bg-main w-full flex-wrap containerHeight">
       <div
         class="bg-white elementWidth ml-4 mb-4 flex rounded-lg h-1/3"
         :class="{ 'mr-4': (index + 1) % 4 == 0, 'mt-4': index < 4 }"
@@ -46,12 +105,15 @@
           >
             {{ item.model }}
           </div>
-          <div class="marginTop text-center font-bold">
-            {{ item.price }} {{ item.price_unit }}
+          <div
+            v-if="item.price_unit == 'EUR'"
+            class="marginTop text-center font-bold"
+          >
+            € {{ item.price }}
           </div>
 
           <router-link :to="`/product/${item.id}`">
-            <button class="shoeButton marginTop text-black bg-blue-300">
+            <button class="shoeButton marginTop text-white bg-main">
               View Shoe
             </button>
           </router-link>
@@ -62,8 +124,8 @@
       <button
         v-for="(item, index) in pages"
         :key="index"
-        class="shoeButton bg-blue-400 mr-2"
-        :class="{ 'bg-blue-200': index == page }"
+        class="shoeButton bg-main mr-2"
+        :class="{ 'bg-sec': index == page }"
         @click="setPage(index)"
       >
         {{ item }}
@@ -73,7 +135,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import shoes from "../start code/shoes.json";
 
 let page = ref(0);
@@ -82,6 +144,8 @@ const brand = ref(false);
 const price = ref(false);
 const text = ref(false);
 const ascending = ref(false);
+let heroOpen = ref(true);
+let dropdownOpen = ref(false);
 const perPage = 12;
 const pages = Math.round(Math.ceil(shoes.length / perPage));
 let results = computed(() => {
@@ -95,6 +159,16 @@ let results = computed(() => {
     return shoes.slice(perPage * page.value, perPage * (page.value + 1));
   }
 });
+function closeHero() {
+  const target = document.querySelectorAll("#hero")[0];
+  target.addEventListener("animationend", () => {
+    heroOpen.value = false;
+  });
+  target.classList.add("animate-fade-out");
+}
+function setAscending() {
+  ascending.value = !ascending.value;
+}
 function setPage(index) {
   page.value = index;
   console.log(page.value);
@@ -127,8 +201,8 @@ function sortByText() {}
 </script>
 
 <style scoped>
-a {
-  color: #42b983;
+#sortbox:checked ~ #sortboxmenu {
+  opacity: 1;
 }
 .elementWidth {
   width: calc(25% - 5 / 4 * 16px);
@@ -160,6 +234,9 @@ input[type="radio"]:checked + label {
 }
 .shoeButton {
   @apply hover:opacity-80 font-bold py-2 md:px-3 px-2 lg:text-base text-sm rounded;
+}
+.sortButton {
+  @apply hover:opacity-80 rounded;
 }
 .marginTop {
   @apply mt-2;

@@ -15,6 +15,24 @@ module.exports = {
         '70': "70%",
         '80': "80%",
         '90': "90%"
+      },
+      backgroundColor: {
+        main: 'var(--main)',
+        sec: 'var(--sec)'
+      },
+      keyframes: {
+        'fade-out': {
+          '100%': { opacity: '0' },
+          '0%': { opacity: '1' },
+        },
+        'fade-in': {
+          '100%': { opacity: '1' },
+          '0%': { opacity: '0' },
+        },
+      },
+      animation: {
+       'fade-out': 'fade-out 2s ease-in-out both',
+       'fade-in': 'fade-out 1.2s ease-in-out both',
       }
     },
   },

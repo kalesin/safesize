@@ -1,6 +1,8 @@
 
 <template>
-  <div class="bg-blue-300 h-10 w-full flex"></div>
+  <div class="bg-white h-10 w-full flex">
+<img src="../assets/SafeSize-Logo-1.png" class="m-2 ml-4">
+  </div>
 </template>
 
 <script setup>

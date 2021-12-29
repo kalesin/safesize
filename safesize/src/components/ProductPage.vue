@@ -1,36 +1,58 @@
 
 <template>
-  <div class="h-90 flex">
-    <div>go back</div>
-    <div class="flex bg-blue-300 w-full">
-      <div class="bg-gray-500 ml-4 mb-4 flex rounded-lg">
-        <img :src="product.thumbnail" class="w-1/3 m-4 rounded-xl" />
-        <div class="w-2/3 my-4 flex flex-col justify-center items-center">
-          <div class="font-bold capitalize text-center">
-            {{ product.brand }}
-          </div>
-          <div
-            class="
-              marginTop
-              capitalize
-              text-center
-              flex
-              items-center
-              mx-2
-              h-1/3
-            "
-          >
+  <div class="h-90 flex flex-col w-full p-4">
+    <router-link to="/home">
+      <p class="shoeButton text-black flex items-center">← Back to home</p>
+    </router-link>
+    <div class="bg-white flex rounded-lg w-full">
+      <img :src="product.thumbnail" class="w-1/3 m-4 rounded-xl" />
+      <div class="w-2/3 my-4 flex justify-center items-center">
+        <div
+          class="
+            textContainer
+            w-2/3
+            h-full
+            m-4
+            flex flex-col
+            items-center
+            justify-center
+          "
+        >
+          <div class="capitalize text-center flex items-center mb-4 text-3xl">
             {{ product.model }}
           </div>
-          <div class="marginTop text-center">{{ product.description }}</div>
-          <div class="marginTop text-center font-bold">
-            {{ product.price }} {{ product.price_unit }}
+          <div
+            v-if="product.price_unit == 'EUR'"
+            class="text-center font-bold mb-4 text-xl"
+          >
+            € {{ product.price }}
           </div>
-          <p class="font-bold marginTop">Available in {{product.size_unit}} sizes:</p>
-          <div class="marginTop sizeContainer flex">
-              <div class="shoeButton bg-blue-300 mr-2" v-for="(item, index) in product.sizes" :key="index">
-                  {{item}}
-              </div>
+          <div class="text-left">{{ product.description }}</div>
+        </div>
+
+        <div
+          class="
+            marginTop
+            sizeContainer
+            flex flex-col
+            w-1/3
+            m-4
+            flex-justify
+            items-center
+          "
+        >
+          <p class="font-bold my-4">
+            Available in {{ product.size_unit }} sizes:
+          </p>
+          <div class="flex flex-wrap">
+            <div
+              class="shoeButton bg-main mr-2 mb-2 sizeWidth text-center"
+              :class="{ 'mr-0': (index + 1) % 3 == 0 }"
+              v-for="(item, index) in product.sizes"
+              :key="index"
+            >
+              {{ item }}
+            </div>
           </div>
         </div>
       </div>
@@ -84,6 +106,9 @@ input[type="radio"]:checked + label {
 }
 .marginTop {
   @apply mt-2;
+}
+.sizeWidth {
+  width: calc((100% - 2 * 8px) / 3);
 }
 </style>
 

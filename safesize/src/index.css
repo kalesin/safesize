@@ -3,5 +3,6 @@
 @tailwind utilities;
 
 :root{
-  --main: #191919;
+  --main: #3da3dc;
+  --sec: #006eb6;
 }

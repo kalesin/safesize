@@ -32,7 +32,7 @@
 
         <div
           class="
-            marginTop
+            mt-2
             sizeContainer
             flex flex-col
             w-1/3
@@ -103,9 +103,6 @@ input[type="radio"]:checked + label {
 }
 .shoeButton {
   @apply hover:opacity-80 font-bold py-2 md:px-3 px-2 lg:text-base text-sm rounded;
-}
-.marginTop {
-  @apply mt-2;
 }
 .sizeWidth {
   width: calc((100% - 2 * 8px) / 3);

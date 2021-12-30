@@ -20,6 +20,9 @@ module.exports = {
         main: 'var(--main)',
         sec: 'var(--sec)'
       },
+      fontSize: {
+        'xxs': '.65rem',
+      },
       keyframes: {
         'fade-out': {
           '100%': { opacity: '0' },
@@ -31,7 +34,7 @@ module.exports = {
         },
       },
       animation: {
-       'fade-out': 'fade-out 2s ease-in-out both',
+       'fade-out': 'fade-out 0.6s ease-in-out both',
        'fade-in': 'fade-out 1.2s ease-in-out both',
       }
     },

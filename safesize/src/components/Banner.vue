@@ -1,7 +1,7 @@
 
 <template>
-  <div class="bg-white h-10 w-full flex">
-<img src="../assets/SafeSize-Logo-1.png" class="m-2 ml-4">
+  <div class="bg-white w-full flex">
+    <img src="../assets/SafeSize-Logo-1.png" class="md:mx-16 mx-8 my-4 w-40" />
   </div>
 </template>
 

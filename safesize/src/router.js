@@ -5,9 +5,9 @@ import ProductPage from './components/ProductPage.vue'
 const router = createRouter({
     history: createWebHistory(),
     routes: [
-        { path: '/home', component: ShoesDisplay },
-        { path: '/product/:id', component: ProductPage },
-        { path: '/:pathMatch(.*)*', component: ShoesDisplay, redirect: '/home' },
+        { path: '/home', component: ShoesDisplay, name: 'home' },
+        { path: '/product/:id', component: ProductPage, name: 'product' },
+        { path: '/:pathMatch(.*)*', component: ShoesDisplay, redirect: 'home' },
     ]
 })
 

@@ -3,10 +3,10 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 3001;
 
-app.use('/', express.static(path.join(__dirname, '../dist')))
-const routes = ['/', '/home']
+app.use('/', express.static('./dist'))
+const routes = ['/', '/home', '/product/:id']
 app.get(routes, (req, res) => {
-    res.sendFile(path.join(__dirname, '../dist/index.html'), { root: __dirname });
+    res.sendFile('./dist/index.html', { root: __dirname });
 });
 
 app.use(

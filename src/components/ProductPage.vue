@@ -7,17 +7,7 @@
     <div class="productContainer">
       <img :src="product.thumbnail" class="lg:w-1/3 w-full rounded-xl" />
       <div class="flex-col flex justify-center">
-        <div
-          class="
-            textContainer
-            lg:pl-8
-            pl-0
-            w-full
-            flex flex-col
-            items-center
-            justify-center
-          "
-        >
+        <div class="textContainer">
           <div class="textModel">
             {{ product.model }}
           </div>
@@ -33,43 +23,21 @@
             Available in {{ product.size_unit }} sizes:
           </p>
           <div class="flex flex-wrap justify-center">
-            <div
-              class="sizeButton bg-main mr-2 mb-2 w-10 text-center"
-              v-for="(item, index) in product.sizes"
-              :key="index"
-            >
+            <div class="sizeButton" v-for="(item, index) in product.sizes" :key="index">
               {{ item }}
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div
-      class="
-        suggContainer
-        bg-main
-        w-full
-        flex flex-col
-        justify-center
-        items-center
-      "
-    >
+    <div class="suggestionContainer">
       <h1 class="capitalize text-white text-xl font-bold md:mb-8 mb-4">
         More from {{ product.brand }}
       </h1>
-      <div
-        class="w-full flex justify-center lg:flex-row flex-col"
-        v-if="topSuggestions.length > 0"
-      >
-        <div
-          class="bg-white flex rounded-lg h-full lg:mb-0 mb-8 mx-2"
-          v-for="(item, index) in topSuggestions"
-          :key="index"
-        >
+      <div class="w-full flex justify-center lg:flex-row flex-col" v-if="topSuggestions.length > 0">
+        <div class="bg-white flex rounded-lg h-full lg:mb-0 mb-8 mx-2" v-for="(item, index) in topSuggestions" :key="index">
           <img :src="item.thumbnail" class="ml-4 rounded-lg w-1/2" />
-          <div
-            class="w-1/2 flex flex-col justify-around lg:my-2 my-8 items-center"
-          >
+          <div class="w-1/2 flex flex-col justify-around lg:my-2 my-8 items-center">
             <div class="font-bold capitalize text-center">{{ item.brand }}</div>
             <div class="capitalize text-center flex items-center mx-2">
               {{ item.model }}
@@ -77,9 +45,8 @@
             <div v-if="item.price_unit == 'EUR'" class="text-center font-bold">
               € {{ item.price }}
             </div>
-
             <router-link :to="`/product/${item.id}`">
-              <button class="shoeButton text-white bg-main">View Shoe</button>
+              <button class="shoeButton">View Shoe</button>
             </router-link>
           </div>
         </div>
@@ -128,13 +95,19 @@ const topSuggestions = computed(() => {
 
 <style scoped>
 .shoeButton {
-  @apply hover:opacity-60 font-bold py-2 md:px-3 px-2 lg:text-base text-sm rounded;
+  @apply hover:opacity-60 font-bold py-2 md:px-3 px-2 lg:text-base text-sm rounded text-white bg-main;
+}
+.sizeContainer {
+  @apply w-full mt-8 flex flex-col justify-center items-center px-8;
 }
 .sizeButton {
-  @apply hover:opacity-60 font-bold lg:text-base text-sm rounded;
+  @apply hover:opacity-60 font-bold lg:text-base text-sm rounded bg-main mr-2 mb-2 w-10 text-center cursor-pointer;
 }
 .homeButton {
   @apply hover:opacity-80 font-bold lg:text-base text-sm rounded;
+}
+.textContainer {
+  @apply lg:pl-8 pl-0 w-full flex flex-col items-center justify-center;
 }
 .textModel {
   @apply capitalize text-center flex items-center mb-4 xl:text-2xl md:text-xl sm:text-lg text-base;
@@ -145,11 +118,8 @@ const topSuggestions = computed(() => {
 .textDescription {
   @apply text-left xl:text-lg lg:text-base text-sm text-justify;
 }
-.suggContainer {
-  @apply md:px-14 px-6 md:py-8 py-4;
-}
-.sizeContainer {
-  @apply w-full mt-8 flex flex-col justify-center items-center px-8;
+.suggestionContainer {
+  @apply md:px-14 px-6 md:py-8 py-4 bg-main w-full flex flex-col justify-center items-center;
 }
 .productContainer {
   @apply bg-white flex rounded-lg w-full lg:h-60 h-auto lg:px-16 px-8 lg:py-8 py-4 lg:flex-row flex-col;

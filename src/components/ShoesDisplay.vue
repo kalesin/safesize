@@ -6,7 +6,7 @@
   <div class="h-90 bg-white w-full">
     <div class="searchBarContainer">
       <div class="flex justify-start items-center md:w-auto w-full">
-        <div class="input-group flex w-96 md:grow-0 grow">
+        <div class="flex w-96 md:grow-0 grow">
           <div class="searchButton" type="button" id="button-addon2">
             <svg
               focusable="false"
@@ -21,88 +21,64 @@
               ></path>
             </svg>
           </div>
-          <input
-            type="search"
-            class="form-control searchInput"
-            placeholder="Search"
-            v-model="searchInput"
-          />
+          <input type="search" class="searchInput" placeholder="Search" v-model="searchInput" />
         </div>
         <div class="priceSortContainer">
           <p class="ml-4 sm:block hidden">Price:</p>
-          <button
-            class="sortButton text-black bg-main p-1 w-8 ml-4"
-            @click="
-              toggleAscending();
-              sortByPrice();
-            "
-            :class="{ 'bg-orange-300': sortAscending }"
-          >
+          <button class="sortButton bg-main" @click="toggleAscending()" :class="{ 'bg-orange-300': sortAscending }">
             <img v-if="sortAscending" src="../assets/ascending.png" />
             <img v-else src="../assets/descending.png" />
           </button>
         </div>
       </div>
-
       <div class="brandContainer">
         <p class="ml-0 md:my-0 my-2">Brand:</p>
         <div v-for="(item, index) in allFilters" :key="index" class="flex md:ml-2 ml-0 lg:mb-0 mb-2">
           <input
-            id="brand"
+            :id="item.toLowerCase()"
             class="checkbox"
             type="checkbox"
             :v-model="activeFilters[item]"
             @click="toggleFilter(item)"
           />
-          <label
-            class=" flex capitalize xl:text-base lg:text-sm text-xs items-center"
-            for="brand"
-          >
+          <label class="flex capitalize xl:text-base lg:text-sm text-xs items-center" :for="item.toLowerCase()">
             {{ item }}
           </label>
         </div>
       </div>
     </div>
-
-    <div class="elementContainer">
+    <div class="elementContainer" v-if="pageProducts.length">
       <div class="element" v-for="(item, index) in pageProducts" :key="index">
         <div class="bg-white flex rounded-lg w-full">
-          <img
-            :src="item.thumbnail"
-            class="my-4 ml-4 rounded-lg sm:w-1/2 w-1/3"
-          />
+          <img :src="item.thumbnail" class="my-4 ml-4 rounded-lg sm:w-1/2 w-1/3" />
           <div class="mb-2 flex flex-col items-center justify-around grow">
             <div class="font-bold capitalize text-center">{{ item.brand }}</div>
-            <div class="modelText mx-2">
+            <div class="textModel">
               <span class="lg:leading-4 leading-3">{{ item.model }}</span>
             </div>
-            <div
-              v-if="item.price_unit == 'EUR'"
-              class="text-center font-bold xl:text-base text-sm"
-            >
+            <div v-if="item.price_unit == 'EUR'" class="text-center font-bold xl:text-base text-sm">
               € {{ item.price }}
             </div>
             <router-link :to="`/product/${item.id}`">
-              <button
-                class="shoeButton py-2 md:px-4 px-2 text-white bg-main"
-              >
-                View Shoe
-              </button>
+              <button class="shoeButton">View Shoe</button>
             </router-link>
           </div>
         </div>
       </div>
+      <div class="flex justify-center w-full pt-8 bg-main">
+        <button
+          v-for="(item, index) in pages"
+          :key="index"
+          class="pageButton bg-white"
+          :class="{ 'bg-blue-200': index == page }"
+          @click="setPage(index)"
+        >
+          {{ item }}
+        </button>
+      </div>
     </div>
-    <div class="flex justify-center w-full pb-8 h-10 bg-main">
-      <button
-        v-for="(item, index) in pages"
-        :key="index"
-        class="shoeButton bg-white mx-1 py-2 md:px-4 px-3"
-        :class="{ 'bg-blue-200': index == page }"
-        @click="setPage(index)"
-      >
-        {{ item }}
-      </button>
+    <div v-else class="elementContainer justify-center items-center">
+      <p>No products found matching search phrase!</p>
     </div>
   </div>
 </template>
@@ -120,16 +96,17 @@ let sortAscending = ref(false);
 function toggleAscending() {
   sortAscending.value = !sortAscending.value;
 }
-let heroOpen = ref(localStorage.getItem('hero')!=='false');
-if(heroOpen.value){
-  document.body.classList.add('overflow-hidden')
+
+let heroOpen = ref(localStorage.getItem("hero") !== "false");
+if (heroOpen.value) {
+  document.body.classList.add("overflow-hidden");
 }
 function closeHero() {
   const target = document.querySelectorAll("#hero")[0];
   target.addEventListener("animationend", () => {
     heroOpen.value = false;
-    localStorage.setItem('hero', 'false')
-    document.body.classList.remove('overflow-hidden')
+    localStorage.setItem("hero", "false");
+    document.body.classList.remove("overflow-hidden");
   });
   target.classList.add("animate-fade-out");
 }
@@ -137,7 +114,7 @@ function closeHero() {
 const allFilters = [];
 shoes.filter((item) => {
   let index = allFilters.findIndex((el) => el == item.brand);
-  if (index <= -1) {
+  if (index == -1) {
     return allFilters.push(item.brand);
   }
 });
@@ -204,19 +181,18 @@ const pages = computed(() =>
 </script>
 
 <style scoped>
-.elementWidth {
-  width: calc(25% - 5 / 4 * 16px);
-  height: calc((100% - 4 * 16px) / 3);
-}
 .checkbox {
   @apply w-6 h-6 mr-2 focus:ring-blue-500 focus:ring-opacity-0 border border-gray-400 rounded;
   filter: hue-rotate(-30deg) brightness(1.25);
 }
 .shoeButton {
-  @apply hover:opacity-70 font-bold lg:text-base text-sm rounded;
+  @apply hover:opacity-70 font-bold lg:text-base text-sm rounded py-2 md:px-4 px-2 text-white bg-main;
+}
+.pageButton {
+  @apply hover:opacity-70 font-bold lg:text-base text-sm rounded py-2 md:px-4 px-3 mx-1;
 }
 .sortButton {
-  @apply hover:opacity-80 rounded;
+  @apply hover:opacity-80 rounded text-black p-1 w-8 ml-4;
 }
 .heroButton {
   @apply hover:opacity-80 bg-orange-400 z-10 absolute bottom-20 md:left-96 sm:left-0 w-64 h-16 text-white text-lg font-bold;
@@ -227,8 +203,8 @@ const pages = computed(() =>
 .element {
   @apply bg-main 2xl:w-1/4 xl:w-1/3 sm:w-1/2 w-full xl:h-1/3 lg:h-60 h-48 p-2 flex rounded-lg;
 }
-.modelText {
-  @apply capitalize text-center flex items-center h-1/3 2xl:text-base xl:text-sm text-xs;
+.textModel {
+  @apply capitalize text-center flex items-center h-1/3 2xl:text-base xl:text-sm text-xs mx-2;
 }
 .priceSortContainer {
   @apply flex items-center;
@@ -240,9 +216,9 @@ const pages = computed(() =>
   @apply flex items-start h-auto md:mx-16 mx-8 md:mb-0 pb-8 flex-col;
 }
 .searchInput {
-  @apply w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-400 focus:outline-none;
+  @apply w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white border border-solid border-gray-300 rounded focus:border-blue-300 focus:outline-none;
 }
 .searchButton {
-  @apply px-6 py-2.5 bg-main opacity-60 text-white font-medium text-xs leading-tight uppercase rounded shadow-md transition duration-150 ease-in-out flex items-center;
+  @apply px-6 bg-main opacity-60 text-white rounded shadow-md flex items-center;
 }
 </style>
